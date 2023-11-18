@@ -2,11 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-// In order to convert decimal to roman, we started from the thousands all the way to the unit, now we will do the opposite, starting from the right to the left
-
 int romanToDecimal(char *romanNum);
 
-// Checks whether we have invalid characters after a given index. For example, we cannot have 'D' after 'D' of 'C' after 'CM'
+// Checks whether we have invalid characters after a given index. For example, we cannot have 'D' after 'D' of 'C' after 'CM'. This function is used for error handling. There is a bug where, if the unser inputs a sequence with "CM" they can still pass more 'C's after the sequence, resulting in wrong outputs.
 int checkInvalidSequence(char *romanNum, int index, char *characters);
 
 // Adds a sequence of characters (M, C, X, I)
@@ -47,6 +45,7 @@ int romanToDecimal(char *romanNum)
     index += 2; // We move 2 indexes since we have checked a sequence of 2 chars
   }
 
+  // Checking for 'D'
   if (romanNum[index] == 'D')
   {
     int validate = checkInvalidSequence(romanNum, index + 1, "MD");
@@ -58,6 +57,7 @@ int romanToDecimal(char *romanNum)
     index++;
   }
 
+  // Checking for 'CD'
   if (romanNum[index] == 'C' && romanNum[index + 1] == 'D')
   {
     int validate = checkInvalidSequence(romanNum, index + 2, "MDC");
@@ -77,6 +77,7 @@ int romanToDecimal(char *romanNum)
     return -1;
   }
 
+  // Checking for 'XC'
   if (romanNum[index] == 'X' && romanNum[index + 1] == 'C')
   {
     // #TODO condition for 90 (we need an extra X for XC) -> I removed the X for now
@@ -113,12 +114,14 @@ int romanToDecimal(char *romanNum)
     index += 2;
   }
 
+  // Checking for 'X'
   int addX = addCharSequence(romanNum, &index, 'X', 10, &counter);
   if (addX == 0)
   {
     return -1;
   }
 
+  // Checking for 'IX'
   if (romanNum[index] == 'I' && romanNum[index + 1] == 'X')
   {
     int validate = checkInvalidSequence(romanNum, index + 2, "MDCLXVI");
@@ -130,6 +133,7 @@ int romanToDecimal(char *romanNum)
     return counter;
   }
 
+  // Checking for 'V'
   if (romanNum[index] == 'V')
   {
     int validate = checkInvalidSequence(romanNum, index + 1, "MDCLXV");
@@ -141,6 +145,7 @@ int romanToDecimal(char *romanNum)
     index++;
   }
 
+  // Checking for 'IV'
   if (romanNum[index] == 'I' && romanNum[index + 1] == 'V')
   {
     int validate = checkInvalidSequence(romanNum, index + 2, "MDCLXVI");
@@ -152,6 +157,7 @@ int romanToDecimal(char *romanNum)
     return counter;
   }
 
+  // Checking for 'I'
   int addI = addCharSequence(romanNum, &index, 'I', 1, &counter);
   if (addI == 0)
   {
